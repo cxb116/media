@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.media.admin.mapper.SspSlotInfoMapper">
+    <resultMap id="map" type="com.media.admin.entity.SspSlotInfo">
+        <id property="id" column="id"/>
+    <result property="mediaId" column="media_id"/>
+        <result property="appId" column="app_id"/>
+        <result property="name" column="name"/>
+        <result property="nameAlise" column="name_alise"/>
+        <result property="adScene" column="ad_scene"/>
+        <result property="sspPayType" column="ssp_pay_type"/>
+        <result property="sspDealRatio" column="ssp_deal_ratio"/>
+
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="enable" column="enable"/>
+        <result property="deleted" column="deleted"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+    <sql id="c">id,media_id,app_id,name,name_alise,ad_scene,ssp_pay_type,ssp_deal_ratio,enable,create_by,create_time,update_by,update_time,deleted,tenant_id</sql>
+    <sql id="pageColumns">s.id,s.media_id,s.app_id,s.name,s.name_alise,s.ad_scene,s.ssp_pay_type,s.ssp_deal_ratio,s.enable,s.create_by,s.create_time,s.update_by,s.update_time,s.deleted,s.tenant_id</sql>
+
+    <sql id="pageWhere"><where>
+        s.deleted = 0 AND s.tenant_id = 1
+        <if test="osType != null">AND a.os_type = #{osType}</if>
+        <if test="id != null">AND s.id = #{id}</if>
+        <if test="mediaId != null">AND s.media_id = #{mediaId}</if>
+        <if test="appId != null">AND s.app_id = #{appId}</if>
+        <if test="name != null and name != ''">AND s.name LIKE CONCAT('%', #{name}, '%')</if>
+        <if test="enable != null">AND s.enable = #{enable}</if>
+        <if test="adScene != null">AND s.ad_scene = #{adScene}</if>
+    </where></sql>
+
+    <select id="selectPage" resultMap="map">SELECT <include refid="pageColumns"/> FROM ssp_slot_info s INNER JOIN ssp_app a ON a.id = s.app_id <include refid="pageWhere"/> ORDER BY s.create_time DESC LIMIT #{limit} OFFSET #{offset}</select>
+    <select id="countPage" resultType="long">SELECT COUNT(*) FROM ssp_slot_info s INNER JOIN ssp_app a ON a.id = s.app_id <include refid="pageWhere"/></select>
+
+
+    <select id="selectById" resultMap="map">SELECT <include refid="c"/> FROM ssp_slot_info WHERE id=#{id}</select>
+
+
+    <select id="selectByMediaId" resultMap="map">SELECT <include refid="c"/> FROM ssp_slot_info WHERE media_id=#{mediaId}</select><select id="selectByAppId" resultMap="map">SELECT <include refid="c"/> FROM ssp_slot_info WHERE app_id=#{appId}</select><select id="selectByAppIdAndMediaId" resultMap="map">SELECT <include refid="c"/> FROM ssp_slot_info WHERE app_id=#{appId} AND media_id=#{mediaId}</select><select id="selectByMediaIdAndEnable" resultMap="map">SELECT <include refid="c"/> FROM ssp_slot_info WHERE media_id=#{mediaId} AND enable=#{enable}</select><select id="selectByAppIdAndEnable" resultMap="map">SELECT <include refid="c"/> FROM ssp_slot_info WHERE app_id=#{appId} AND enable=#{enable}</select><delete id="deleteById">DELETE FROM ssp_slot_info WHERE id=#{id}</delete><delete id="deleteByAppId">DELETE FROM ssp_slot_info WHERE app_id=#{appId}</delete><delete id="deleteByMediaId">DELETE FROM ssp_slot_info WHERE media_id=#{mediaId}</delete></mapper>

@@ -1,0 +1,44 @@
+import request from '@/utils/http'
+
+export function fetchMediaRegister(params: Api.MediaAuth.RegisterParams) {
+  return request.post<Api.MediaAuth.RegisterResponse>({
+    url: '/api/media/auth/register',
+    params
+  })
+}
+
+export function fetchMediaLogin(params: Api.MediaAuth.LoginParams) {
+  return request.post<Api.MediaAuth.LoginResponse>({
+    url: '/api/media/auth/login',
+    params
+  })
+}
+
+/** 使用主后台签发的一次性票据登录 */
+export function fetchMediaSsoLogin(token: string) {
+  return request.post<Api.MediaAuth.LoginResponse>({
+    url: `/api/media/auth/sso-login?token=${encodeURIComponent(token)}`
+  })
+}
+
+export function fetchMediaValidateToken() {
+  return request.get<{ id: number; account: string; name: string; enable: number }>({
+    url: '/api/media/auth/validate'
+  })
+}
+
+export function fetchMediaLogout() {
+  return request.post({
+    url: '/api/media/auth/logout'
+  })
+}
+
+/**
+ * 更新媒体用户信息
+ */
+export function fetchUpdateMediaInfo(data: Api.MediaAuth.UpdateInfoParams) {
+  return request.post<Api.MediaAuth.LoginResponse>({
+    url: '/api/media/auth/update',
+    data
+  })
+}

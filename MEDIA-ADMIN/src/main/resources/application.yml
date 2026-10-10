@@ -1,0 +1,56 @@
+﻿server:
+  port: 8888
+
+spring:
+  application:
+    name: media-admin
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://127.0.0.1:3306/ruoyi-vue-pro?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useLocalSessionState=true&rewriteBatchedStatements=true
+#    username: root
+#    password: root
+#    url: jdbc:mysql://mysqld5e82c42b23e.rds.ivolces.com:3306/dsp-admin?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useLocalSessionState=true&rewriteBatchedStatements=true
+    url: jdbc:mysql://mysqlbd8a09304398.rds.ivolces.com:3306/ssp?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useLocalSessionState=true&rewriteBatchedStatements=true
+#    username: dsproot
+#    password: Ddzcxl2008
+    username: root
+    password: 846402869cbb@gmail.com
+
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 540000  # 9鍒嗛挓锛屽皬浜嶮ySQL榛樿鐨剋ait_timeout(8灏忔椂)锛岄伩鍏嶈繛鎺ヨ鍏抽棴
+      connection-test-query: SELECT 1
+      validation-timeout: 5000
+      leak-detection-threshold: 60000  # 妫€娴嬭繛鎺ユ硠婕?      pool-name: MediaAdminHikariCP
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+# JWT閰嶇疆
+jwt:
+  secret: media-admin-secret-key-for-jwt-token-generation-2024-secure-key-hs512-must-be-at-least-64-bytes-long
+  expiration: 86400000 # 24灏忔椂锛堟绉掞級
+
+logging:
+  level:
+    com.media.admin: debug
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: com.media.admin.entity
+  configuration:
+    map-underscore-to-camel-case: true
+

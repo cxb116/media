@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.media.admin.mapper.SspMediaMapper">
+  <resultMap id="SspMediaMap" type="com.media.admin.entity.SspMedia">
+    <id property="id" column="id"/>
+    <result property="mediaCompanyName" column="media_company_name"/>
+    <result property="mediaCompanyShort" column="media_company_short"/>
+    <result property="mediaCompanyCode" column="media_company_code"/>
+    <result property="mediaCompanyLicense" column="media_company_license"/>
+    <result property="mediaCompanyAddress" column="media_company_address"/>
+    <result property="mediaOwnerName" column="media_owner_name"/>
+    <result property="contactName" column="contact_name"/>
+    <result property="contactPhone" column="contact_phone"/>
+    <result property="contactEmail" column="contact_email"/>
+    <result property="createBy" column="create_by"/>
+    <result property="createTime" column="create_time"/>
+    <result property="updateBy" column="update_by"/>
+    <result property="updateTime" column="update_time"/>
+  </resultMap>
+  <sql id="columns">id,name,account,password,media_company_name,media_company_short,media_company_code,media_company_license,media_company_address,media_owner_name,contact_name,contact_phone,contact_email,enable,create_by,create_time,update_by,update_time,remark</sql>
+  <select id="selectById" resultMap="SspMediaMap">SELECT <include refid="columns"/> FROM ssp_media WHERE id=#{id}</select>
+  <select id="selectByAccount" resultMap="SspMediaMap">SELECT <include refid="columns"/> FROM ssp_media WHERE account=#{account} LIMIT 1</select>
+  <select id="countByAccount" resultType="int">SELECT COUNT(1) FROM ssp_media WHERE account=#{account}</select>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">INSERT INTO ssp_media (name,account,password,media_company_name,media_company_short,media_company_code,media_company_license,media_company_address,media_owner_name,contact_name,contact_phone,contact_email,enable,create_by,remark) VALUES (#{name},#{account},#{password},#{mediaCompanyName},#{mediaCompanyShort},#{mediaCompanyCode},#{mediaCompanyLicense},#{mediaCompanyAddress},#{mediaOwnerName},#{contactName},#{contactPhone},#{contactEmail},#{enable},#{createBy},#{remark})</insert>
+  <update id="update">UPDATE ssp_media SET name=#{name},media_company_address=#{mediaCompanyAddress},contact_phone=#{contactPhone},contact_email=#{contactEmail},remark=#{remark},update_by=#{updateBy},update_time=NOW() WHERE id=#{id}</update>
+</mapper>

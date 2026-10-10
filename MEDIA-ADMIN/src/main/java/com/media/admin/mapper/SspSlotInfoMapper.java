@@ -1,0 +1,6 @@
+package com.media.admin.mapper;
+import com.media.admin.entity.SspSlotInfo; import org.apache.ibatis.annotations.Mapper; import org.apache.ibatis.annotations.Param; import java.util.List;
+@Mapper public interface SspSlotInfoMapper { SspSlotInfo selectById(Long id); List<SspSlotInfo> selectByMediaId(Long mediaId); List<SspSlotInfo> selectByAppId(Long appId); List<SspSlotInfo> selectByAppIdAndMediaId(@Param("appId")Long appId,@Param("mediaId")Long mediaId); List<SspSlotInfo> selectByMediaIdAndEnable(@Param("mediaId")Long mediaId,@Param("enable")Integer enable); List<SspSlotInfo> selectByAppIdAndEnable(@Param("appId")Long appId,@Param("enable")Integer enable);
+    List<SspSlotInfo> selectPage(@Param("id") Long id, @Param("mediaId") Long mediaId, @Param("appId") Long appId, @Param("name") String name, @Param("enable") Integer enable, @Param("adScene") Integer adScene, @Param("osType") Integer osType, @Param("offset") int offset, @Param("limit") int limit);
+    long countPage(@Param("id") Long id, @Param("mediaId") Long mediaId, @Param("appId") Long appId, @Param("name") String name, @Param("enable") Integer enable, @Param("adScene") Integer adScene, @Param("osType") Integer osType);
+    int deleteById(Long id); int deleteByAppId(Long appId); int deleteByMediaId(Long mediaId); }

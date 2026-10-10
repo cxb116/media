@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.media.admin.mapper.DataSspSlotMapper">
+
+    <resultMap id="DataSspSlotMap" type="com.media.admin.dto.DataSspSlotPageResponse">
+        <id property="id" column="id"/>
+        <!-- The database column is intentionally named meida_id. -->
+        <result property="mediaId" column="media_id"/>
+        <result property="appId" column="app_id"/>
+        <result property="osType" column="app_os_type"/>
+        <result property="adScene" column="adScene"/>
+        <result property="sspSlotId" column="ssp_slot_id"/>
+        <result property="dspSlotId" column="dsp_slot_id"/>
+        <result property="dspSlotCode" column="dsp_slot_code"/>
+        <result property="showPv" column="show_pv"/>
+        <result property="showUv" column="show_uv"/>
+        <result property="clickPv" column="click_pv"/>
+        <result property="clickUv" column="click_uv"/>
+        <result property="reqPv" column="req_pv"/>
+        <result property="reqCount" column="req_count"/>
+        <result property="reqUv" column="req_uv"/>
+        <result property="discard" column="discard"/>
+        <result property="retPv" column="ret_pv"/>
+        <result property="retUv" column="ret_uv"/>
+        <result property="spend" column="spend"/>
+        <result property="income" column="income"/>
+        <result property="discountClickPv" column="discount_click_pv"/>
+        <result property="discountShowPv" column="discount_show_pv"/>
+        <result property="dplsuccPv" column="dplsucc_pv"/>
+        <result property="completePv" column="complete_pv"/>
+        <result property="installPv" column="install_pv"/>
+        <result property="activatePv" column="activate_pv"/>
+        <result property="date" column="date"/>
+        <result property="dateStr" column="date_str"/>
+        <result property="slotName" column="slot_name"/>
+        <result property="appName" column="app_name"/>
+        <result property="discardRate" column="discard_rate"/>
+        <result property="fillRate" column="fill_rate"/>
+        <result property="showRate" column="show_rate"/>
+        <result property="ecpm" column="ecpm"/>
+    </resultMap>
+
+    <sql id="whereClause">
+        <where>
+            <if test="mediaId != null">AND d.media_id = #{mediaId}</if>
+            <if test="name != null and name != ''">AND slot.name_alise LIKE CONCAT('%', #{name}, '%')</if>
+            <if test="appId != null">AND d.app_id = #{appId}</if>
+            <if test="osType != null">AND app.os_type = #{osType}</if>
+            <if test="adScene != null">AND slot.ad_scene = #{adScene}</if>
+            <if test="sspSlotId != null">AND d.ssp_slot_id = #{sspSlotId}</if>
+            <if test="startDate != null">AND d.date <![CDATA[ >= ]]> #{startDate}</if>
+            <if test="endDate != null">AND d.date <![CDATA[ <= ]]> #{endDate}</if>
+        </where>
+    </sql>
+
+    <select id="getDataSspSlotPage" parameterType="com.media.admin.dto.DataSspSlotPageRequest" resultMap="DataSspSlotMap">
+        <bind name="offset" value="(current - 1) * size"/>
+        SELECT d.id, d.media_id, d.app_id, d.ssp_slot_id, d.dsp_slot_id, d.dsp_slot_code,
+        slot.name AS slot_name, app.name AS app_name, app.os_type AS app_os_type,slot.ad_scene as adScene,
+        d.show_pv, d.show_uv, d.click_pv, d.click_uv, d.req_pv, d.req_count, d.req_uv, d.discard,
+        d.ret_pv, d.ret_uv, d.spend, d.income, d.discount_click_pv, d.discount_show_pv,
+        d.dplsucc_pv, d.complete_pv, d.install_pv, d.activate_pv, d.date
+        FROM data_ssp_slot_day AS d
+        LEFT JOIN ssp_slot_info AS slot ON d.ssp_slot_id = slot.id
+        LEFT JOIN ssp_app AS app ON d.app_id = app.id
+        <include refid="whereClause"/>
+        ORDER BY
+        <choose>
+            <when test="sortField == 'date'">d.date</when>
+            <when test="sortField == 'reqPv'">d.req_pv</when>
+            <when test="sortField == 'retPv'">d.ret_pv</when>
+            <when test="sortField == 'showPv'">d.show_pv</when>
+            <when test="sortField == 'clickPv'">d.click_pv</when>
+            <when test="sortField == 'discard'">d.discard</when>
+            <when test="sortField == 'dplsuccPv'">d.dplsucc_pv</when>
+            <when test="sortField == 'completePv'">d.complete_pv</when>
+            <when test="sortField == 'installPv'">d.install_pv</when>
+            <when test="sortField == 'activatePv'">d.activate_pv</when>
+            <when test="sortField == 'spend'">d.spend</when>
+            <otherwise>d.date</otherwise>
+        </choose>
+        <choose>
+            <when test="sortOrder == 'asc'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>, d.id DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countDataSspSlot" parameterType="com.media.admin.dto.DataSspSlotPageRequest" resultType="long">
+        SELECT COUNT(1)
+        FROM data_ssp_slot_day AS d
+        LEFT JOIN ssp_slot_info AS slot ON d.ssp_slot_id = slot.id
+        LEFT JOIN ssp_app AS app ON d.app_id = app.id
+        <include refid="whereClause"/>
+    </select>
+
+
+    <select id="getDataSspSlotSum" parameterType="com.media.admin.dto.DataSspSlotPageRequest" resultMap="DataSspSlotMap">
+        SELECT
+        SUM(d.show_pv) AS show_pv,
+        SUM(d.click_pv) AS click_pv,
+        SUM(d.req_pv) AS req_pv,
+        SUM(d.discard) AS discard,
+        SUM(d.ret_pv) AS ret_pv,
+        SUM(d.spend) AS spend,
+        SUM(d.income) AS income,
+        SUM(d.discount_click_pv) AS discount_click_pv,
+        SUM(d.discount_show_pv) AS discount_show_pv,
+        SUM(d.dplsucc_pv) AS dplsucc_pv,
+        SUM(d.complete_pv) AS complete_pv,
+        SUM(d.install_pv) AS install_pv,
+        SUM(d.activate_pv) AS activate_pv
+        FROM data_ssp_slot_day AS d
+        LEFT JOIN ssp_slot_info AS slot ON d.ssp_slot_id = slot.id
+        LEFT JOIN ssp_app AS app ON d.app_id = app.id
+        <include refid="whereClause"/>
+    </select>
+</mapper>
